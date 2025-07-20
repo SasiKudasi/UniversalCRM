@@ -20,11 +20,12 @@ namespace Visas.Controllers
     {
         private readonly User _admin;
         private readonly IAdminPageService _adminPageService;
-
-        public AdminController(IOptions<User> options, IAdminPageService adminPageService)
+        private readonly ILogger<AdminController> _logger;
+        public AdminController(IOptions<User> options, IAdminPageService adminPageService, ILogger<AdminController> logger)
         {
             _admin = options.Value;
             _adminPageService = adminPageService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -41,6 +42,7 @@ namespace Visas.Controllers
             var result = hasher.VerifyHashedPassword(null, _admin.PasswordHash, pwd); // порядок: (user, HASH, input)
             if (result == PasswordVerificationResult.Failed)
             {
+                _logger.LogError($"{DateTime.Now} : {HttpContext.Connection.RemoteIpAddress} : Неудачная попытка авторизации");
                 return Unauthorized("Invalid username or password");
             }
 
@@ -53,7 +55,7 @@ namespace Visas.Controllers
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
+            _logger.LogInformation($"{DateTime.Now} : {HttpContext.Connection.RemoteIpAddress}: Авторизация пользователя  : {User.Identity.Name}");
             return Ok("Success");
         }
 
@@ -63,6 +65,7 @@ namespace Visas.Controllers
         public async Task<ActionResult<string>> DeletePage(int id)
         {
             await _adminPageService.DeletePageAsync(id);
+            _logger.LogInformation($"Удалена страница: {id}");
             return Ok("Page deleted successfully");
         }
 
@@ -75,6 +78,12 @@ namespace Visas.Controllers
             }
 
             var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page));
+            if (createdPage == null)
+            {
+                return BadRequest("Что то пошло не так при создании страницы");
+            }
+
+            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPage.Title} | {createdPage.Id}");
             return Ok(createdPage);
         }
 
@@ -87,6 +96,12 @@ namespace Visas.Controllers
             }
 
             var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page), parentID);
+            if (createdPage == null)
+            {
+                return BadRequest("Что то пошло не так при создании страницы");
+            }
+
+            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPage.Title} | {createdPage.Id}");
             return Ok(createdPage);
         }
 
@@ -126,6 +141,12 @@ namespace Visas.Controllers
             }
 
             var updatedPage = await _adminPageService.UpdatePageAsync(page);
+            if (updatedPage == null)
+            {
+                return BadRequest("Что то пошло не так при обновлении страницы");
+            }
+
+            _logger.LogInformation($"{DateTime.Now} : Обновлена страница {page.Title} | {page.Id}");
             return Ok(updatedPage);
         }
 
