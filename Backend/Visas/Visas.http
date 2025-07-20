@@ -1,0 +1,6 @@
+@Visas_HostAddress = http://localhost:5197
+
+GET {{Visas_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
