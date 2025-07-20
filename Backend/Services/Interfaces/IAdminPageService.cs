@@ -16,5 +16,6 @@ namespace Services.Interfaces
         public Task<Page> GetPageByIdAsync(int id);
         public Task<List<Page>> GetAllActivePagesAsync();
         public Task<List<Page>> GetAllPagesAsycn();
+        public Task<Page> GetPageBySlagAsync(string slug);
     }
 }

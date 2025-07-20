@@ -128,5 +128,24 @@ namespace Visas.Controllers
             var updatedPage = await _adminPageService.UpdatePageAsync(page);
             return Ok(updatedPage);
         }
+
+
+        [HttpGet("page_by_slag")]
+        public async Task<ActionResult<PageRequestDTO>> GetPageBySlag(string slag)
+        {
+            var pages = await _adminPageService.GetPageBySlagAsync(slag);
+            return Ok(pages.ToResponse());
+        }
+
+
+        [HttpGet("me")]
+        public ActionResult<string> GetMe()
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+                return Unauthorized();
+
+            return Ok(User.Identity.Name);
+        }
+
     }
 }

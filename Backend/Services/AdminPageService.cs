@@ -78,5 +78,25 @@ namespace Services
         {
             await _pageRepository.DeletePageAsync(id);
         }
+
+
+        public async Task<Page> GetPageBySlagAsync(string slug)
+        {
+            var slugPath = slug.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+            if (slugPath.Length < 1)
+            {
+                var homePage = await _pageRepository.GetPageBySlugAsync("");
+                return homePage.ToDomain();
+            }
+
+            var pageEntity = await _pageRepository.GetPageBySlugPathAsync(slugPath);
+            if (pageEntity == null)
+            {
+                throw new FileNotFoundException($"Page with slug '{slug}' not found.");
+            }
+
+            return pageEntity.ToDomain();
+        }
     }
 }
