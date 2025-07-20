@@ -10,9 +10,19 @@ namespace Services.Mappers
 {
     internal static class PageMapper
     {
-        public static Page ToDomain(this PageEntity entity)
+        public static Page ToDomain(this PageEntity entity, HashSet<int>? visited = null)
         {
+            visited ??= new HashSet<int>();
+
+            if (visited.Contains(entity.Id))
+            {
+                // Уже обработан — возвращаем null или заглушку, чтобы избежать зацикливания
+                return null!;
+            }
+            visited.Add(entity.Id);
+
             var page = Page.Create(
+                id: entity.Id,
                title: entity.Title,
                slug: entity.Slug,
                content: entity.HtmlContent,
@@ -25,16 +35,17 @@ namespace Services.Mappers
             page.SetUpdatedAt(entity.UpdatedAt);
             page.SetActive(entity.IsActive);
 
-            if (entity.Parent != null)
-            {
-                var parentDomain = entity.Parent.ToDomain();
-                page.SetParent(parentDomain);
-            }
+            //if (entity.Parent != null)
+            //{
+            //    var parentDomain = entity.Parent.ToDomain();
+            //    page.SetParent(parentDomain);
+            //}
 
             foreach (var childEntity in entity.Children)
             {
-                var childDomain = childEntity.ToDomain();
-                page.AddChild(childDomain);
+                var childDomain = childEntity.ToDomain(visited);
+                if (childDomain != null)
+                    page.AddChild(childDomain);
             }
 
             return page;
@@ -60,7 +71,7 @@ namespace Services.Mappers
             };
 
             // Родитель
-            // entity.Parent = domain.Parent?.ToEntity();
+            entity.Parent = page.Parent?.ToDAL();
 
             // Дети
             entity.Children = page.Children.Select(c => c.ToDAL()).ToList();

@@ -56,6 +56,24 @@ namespace Services
             return createdEntity.ToDomain();
         }
 
+        public async Task<Page> CreatePageAsync(Page page, int parentId)
+        {
+            var parent = await _pageRepository.GetPageByIdAsync(parentId);
+            if (parent is null)            
+            {
+                throw new ArgumentNullException($"Parent page with ID {parentId} not found");
+            }
+            var entity = page.ToDAL();
+
+            entity.ParentId = parent.Id;
+            if (entity == null) throw new ArgumentNullException(nameof(page), "Page cannot be null");
+
+            var createdEntity = await _pageRepository.CreatePageAsync(entity);
+            var t = createdEntity.ToDomain();
+            return t;
+        }
+
+
         public async Task DeletePageAsync(int id)
         {
             await _pageRepository.DeletePageAsync(id);

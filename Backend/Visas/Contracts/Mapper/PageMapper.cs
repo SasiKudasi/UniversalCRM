@@ -19,14 +19,24 @@ namespace Visas.Contracts.Mapper
             );
 
             page.SetActive(dto.IsActive);
-
-            //if (dto.ParentId.HasValue)
-            //{
-            //    // Подразумеваем, что родитель уже есть в БД и его ID мы передаём
-            //    page.SetParent(new Page { Id = dto.ParentId.Value });
-            //}
-
             return page;
+        }
+
+
+        public static PageResponseDTO ToResponse(this Page page)
+        {
+            return new PageResponseDTO
+            {
+                Id = page.Id,
+                Title = page.Title,
+                Slug = page.Slug,
+                Content = page.Content,
+                MetaTitle = page.MetaTitle,
+                MetaDescription = page.MetaDescription,
+                MetaKeywords = page.MetaKeywords,
+                IsActive = page.IsActive,
+                Children = page.Children.Select(c => c.ToResponse()).ToList()
+            };
         }
     }
 }

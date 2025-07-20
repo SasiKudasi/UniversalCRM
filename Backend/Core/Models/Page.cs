@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
@@ -28,6 +29,7 @@ namespace Core.Models
         public bool IsActive { get; private set; } = true;
 
         // Иерархия
+        [JsonIgnore]
         public int? ParentId { get; private set; }
         public Page? Parent { get; private set; }
         public List<Page> Children { get; private set; } = new();
@@ -89,6 +91,33 @@ namespace Core.Models
 
             return new Page
             {
+                Title = title,
+                Slug = slug,
+                Content = content,
+                MetaTitle = metaTitle,
+                MetaDescription = metaDescription,
+                MetaKeywords = metaKeywords
+            };
+        }
+
+
+        public static Page Create(int id, string title, string slug, string? content = null,
+    string? metaTitle = null, string? metaDescription = null, string? metaKeywords = null
+    )
+        {
+
+
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Title cannot be empty", nameof(title));
+            if (string.IsNullOrWhiteSpace(slug))
+                throw new ArgumentException("Slug cannot be empty", nameof(slug));
+            if (slug.Length > 200)
+                throw new ArgumentException("Slug cannot exceed 200 characters", nameof(slug));
+
+
+            return new Page
+            {
+                Id = id,
                 Title = title,
                 Slug = slug,
                 Content = content,

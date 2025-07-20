@@ -74,18 +74,29 @@ namespace Visas.Controllers
                 return BadRequest("Page data is required");
             }
 
-            
-
             var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page));
             return Ok(createdPage);
         }
 
+        [HttpPost("with_parent")]
+        public async Task<ActionResult<Page>> CreatePageWithParent([FromForm] PageRequestDTO page, int parentID)
+        {
+            if (page == null)
+            {
+                return BadRequest("Page data is required");
+            }
+
+            var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page), parentID);
+            return Ok(createdPage);
+        }
 
         [HttpGet("all_active_page")]
-        public async Task<ActionResult<IEnumerable<Page>>> GetAllActivePages()
+        public async Task<ActionResult<IEnumerable<PageResponseDTO>>> GetAllActivePages()
         {
             var pages = await _adminPageService.GetAllActivePagesAsync();
-            return Ok(pages);
+            var pagesResponse = pages.Select(p => p.ToResponse());
+
+            return Ok(pagesResponse);
         }
 
         [HttpGet("all_page")]

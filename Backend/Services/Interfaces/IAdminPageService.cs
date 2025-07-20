@@ -11,6 +11,7 @@ namespace Services.Interfaces
     {
         public Task DeletePageAsync(int id);
         public Task<Page> CreatePageAsync(Page page);
+        public Task<Page> CreatePageAsync(Page page, int parentID);
         public Task<Page> UpdatePageAsync(Page page);
         public Task<Page> GetPageByIdAsync(int id);
         public Task<List<Page>> GetAllActivePagesAsync();
