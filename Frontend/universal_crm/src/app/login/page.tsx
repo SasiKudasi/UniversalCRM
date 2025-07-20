@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
+"use client";
+
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();

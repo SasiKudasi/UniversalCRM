@@ -18,7 +18,7 @@ namespace Visas
     // Подключение кеширования
     // Подключение логирования
     // Подумать о сборе почт и т д для рассылки
-    
+
     public class Program
     {
         public static void Main(string[] args)
@@ -49,11 +49,18 @@ namespace Visas
                     options.LoginPath = "/admin/login";
                 });
 
-
+            builder.Services.AddCors();
 
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
+
+
+            app.UseCors(
+                options =>
+                {
+                    options.AllowAnyOrigin();
+                });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
