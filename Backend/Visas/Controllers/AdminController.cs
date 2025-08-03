@@ -106,19 +106,21 @@ namespace Visas.Controllers
         }
 
         [HttpGet("all_active_page")]
-        public async Task<ActionResult<IEnumerable<PageResponseDTO>>> GetAllActivePages()
+        public async Task<ActionResult<IEnumerable<PageResponseWhithChildrenDTO>>> GetAllActivePages()
         {
             var pages = await _adminPageService.GetAllActivePagesAsync();
-            var pagesResponse = pages.Select(p => p.ToResponse());
+            var pagesResponse = pages.Select(p => p.ToResponseWhithChildren());
 
             return Ok(pagesResponse);
         }
 
         [HttpGet("all_page")]
-        public async Task<ActionResult<IEnumerable<Page>>> GetAllPages()
+        public async Task<ActionResult<IEnumerable<SoloPageResponceDTO>>> GetAllPages()
         {
             var pages = await _adminPageService.GetAllPagesAsycn();
-            return Ok(pages);
+            var pagesResponse = pages.Select(p => p.ToResponse());
+
+            return Ok(pagesResponse);
         }
 
         [HttpGet("{id}")]
@@ -155,7 +157,7 @@ namespace Visas.Controllers
         public async Task<ActionResult<PageRequestDTO>> GetPageBySlag(string slag)
         {
             var pages = await _adminPageService.GetPageBySlagAsync(slag);
-            return Ok(pages.ToResponse());
+            return Ok(pages.ToResponseWhithChildren());
         }
 
 

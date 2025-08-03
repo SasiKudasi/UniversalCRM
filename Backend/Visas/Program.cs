@@ -46,9 +46,32 @@ namespace Visas
                 {
                     options.Cookie.Name = "testCookie";
                     options.LoginPath = "/admin/login";
-                    options.Cookie.SameSite = SameSiteMode.Lax; // <== ОБЯЗАТЕЛЬНО
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // <== отключаем Secure на dev
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None; 
+
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        OnValidatePrincipal = context =>
+                        {
+                            var name = context.Principal?.Identity?.Name ?? "null";
+                            Console.WriteLine($"OnValidatePrincipal: {name}");
+                            return Task.CompletedTask;
+                        },
+
+                        OnRedirectToLogin = ctx =>
+                        {
+                            if (ctx.Request.Path.StartsWithSegments("/api") &&
+                                ctx.Response.StatusCode == StatusCodes.Status200OK)
+                            {
+                                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                return Task.CompletedTask;
+                            }
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
+            builder.Services.AddAuthorization();
 
             builder.Services.AddCors(options =>
             {
@@ -58,17 +81,10 @@ namespace Visas
                         .WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials();  // разрешаем куки и авторизацию
+                        .AllowCredentials();
                 });
             });
-
-            builder.Services.AddAuthorization();
-
-            var app = builder.Build();
-
-
-            app.UseCors("DevCorsPolicy");
-
+            var app = builder.Build(); 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -76,9 +92,10 @@ namespace Visas
                 app.UseSwaggerUI();
             }
 
-          //  app.UseHttpsRedirection();
-            app.UseRouting();
+            //  app.UseHttpsRedirection();
 
+            app.UseCors("DevCorsPolicy");
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 

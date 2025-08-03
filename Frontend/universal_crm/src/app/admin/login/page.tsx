@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@/lib/api"; // путь к твоему api.ts
+import { api } from "@/lib/api"; 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
       );
 
       if (response.status === 200) {
-        router.push("/admin/dashboard/"); // редирект после успешного входа
+        router.push("/admin/dashboard/");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

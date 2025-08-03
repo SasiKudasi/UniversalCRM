@@ -1,6 +1,6 @@
 ﻿namespace Visas.Contracts
 {
-    public class PageResponseDTO
+    public class PageResponseWhithChildrenDTO
     {
         public int Id { get; set; }
         public string Title { get; set; } = null!;
@@ -10,6 +10,6 @@
         public string? MetaDescription { get; set; }
         public string? MetaKeywords { get; set; }
         public bool IsActive { get; set; }
-        public List<PageResponseDTO> Children { get; set; } = new();
+        public List<PageResponseWhithChildrenDTO> Children { get; set; } = new();
     }
 }

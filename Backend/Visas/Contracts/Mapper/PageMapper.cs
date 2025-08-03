@@ -23,9 +23,9 @@ namespace Visas.Contracts.Mapper
         }
 
 
-        public static PageResponseDTO ToResponse(this Page page)
+        public static PageResponseWhithChildrenDTO ToResponseWhithChildren(this Page page)
         {
-            return new PageResponseDTO
+            return new PageResponseWhithChildrenDTO
             {
                 Id = page.Id,
                 Title = page.Title,
@@ -35,8 +35,24 @@ namespace Visas.Contracts.Mapper
                 MetaDescription = page.MetaDescription,
                 MetaKeywords = page.MetaKeywords,
                 IsActive = page.IsActive,
-                Children = page.Children.Select(c => c.ToResponse()).ToList()
+                Children = page.Children.Select(c => c.ToResponseWhithChildren()).ToList()
             };
         }
+
+        public static SoloPageResponceDTO ToResponse(this Page page)
+        {
+            return new SoloPageResponceDTO
+            {
+                Id = page.Id,
+                Title = page.Title,
+                Slug = page.Slug,
+                Content = page.Content,
+                MetaTitle = page.MetaTitle,
+                MetaDescription = page.MetaDescription,
+                MetaKeywords = page.MetaKeywords,
+                IsActive = page.IsActive
+            };
+        }
+
     }
 }
