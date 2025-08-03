@@ -1,5 +1,4 @@
 "use client";
-
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,8 +28,9 @@ export default function LoginPage() {
       );
 
       if (response.status === 200) {
-        router.push("/admin"); // редирект после успешного входа
+        router.push("/admin/dashboard/"); // редирект после успешного входа
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.data) {
         setError(error.response.data);
