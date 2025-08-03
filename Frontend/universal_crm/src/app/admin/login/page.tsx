@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import { api } from "@/lib/api"; // путь к твоему api.ts
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -17,8 +17,8 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const response = await axios.post(
-        "/api/login",
+      const response = await api.post(
+        "/admin/login",
         new URLSearchParams({ userName, pwd }),
         {
           headers: {
@@ -34,6 +34,8 @@ export default function LoginPage() {
     } catch (error: any) {
       if (error.response?.data) {
         setError(error.response.data);
+      } else if (error.message) {
+        setError(error.message);
       } else {
         setError("Ошибка сети");
       }

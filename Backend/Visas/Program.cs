@@ -46,20 +46,28 @@ namespace Visas
                 {
                     options.Cookie.Name = "testCookie";
                     options.LoginPath = "/admin/login";
+                    options.Cookie.SameSite = SameSiteMode.Lax; // <== ОБЯЗАТЕЛЬНО
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // <== отключаем Secure на dev
                 });
 
-            builder.Services.AddCors();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("DevCorsPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();  // разрешаем куки и авторизацию
+                });
+            });
 
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
 
-            app.UseCors(
-                options =>
-                {
-                    options.AllowAnyOrigin();
-                });
+            app.UseCors("DevCorsPolicy");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -68,7 +76,7 @@ namespace Visas
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+          //  app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();

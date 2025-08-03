@@ -13,7 +13,7 @@ using Visas.Contracts.Mapper;
 namespace Visas.Controllers
 {
     [ApiController]
-    [Route("admin")]
+    [Route("api/admin")]
     [Authorize]
     public class AdminController
         : ControllerBase
