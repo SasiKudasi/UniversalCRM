@@ -1,7 +1,8 @@
 "use client";
-import { api } from "@/lib/api"; 
+import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button, Form } from "react-bootstrap";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function LoginPage() {
 
     try {
       const response = await api.post(
-        "/admin/login",
+        "admin/login",
         new URLSearchParams({ userName, pwd }),
         {
           headers: {
@@ -32,13 +33,7 @@ export default function LoginPage() {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.response?.data) {
-        setError(error.response.data);
-      } else if (error.message) {
-        setError(error.message);
-      } else {
-        setError("Ошибка сети");
-      }
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -47,33 +42,30 @@ export default function LoginPage() {
   return (
     <div style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
       <h1>Вход в админку</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Имя пользователя:
-          <input
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Login</Form.Label>
+          <Form.Control
             type="text"
+            placeholder="Enter login"
             value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            required
-            autoFocus
-          />
-        </label>
-        <br />
-        <label>
-          Пароль:
-          <input
+            onChange={(e) => setUserName(e.target.value)} />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             type="password"
+            placeholder="Password"
             value={pwd}
             onChange={(e) => setPwd(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit" disabled={loading}>
+            required />
+        </Form.Group>
+        <Button variant="primary" type="submit">
           {loading ? "Вход..." : "Войти"}
-        </button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        </Button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </Form>
     </div>
   );
 }

@@ -7,13 +7,12 @@ namespace DAL.Entity
     public class PageEntity
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required, MaxLength(200)]
         public string Title { get; set; } = null!;
 
-        [Required, MaxLength(200)]
-        public string Slug { get; set; } = null!;
+        public string Path { get; set; } = null!;
 
         public string? HtmlContent { get; set; }
 
@@ -27,12 +26,15 @@ namespace DAL.Entity
 
         public bool IsActive { get; set; } = true;
 
+        public bool IsRootPage { get; set; } = false;
+        public int OrdinalNuber { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Вложенность
-        public int? ParentId { get; set; }
+        public Guid? ParentId { get; set; }
 
         [ForeignKey(nameof(ParentId))]
         public PageEntity? Parent { get; set; }

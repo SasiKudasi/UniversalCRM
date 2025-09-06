@@ -32,10 +32,9 @@ namespace Visas
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<IPageRepository, PageRepository>();
-            builder.Services.AddScoped<IUserPageService, UserPageService>();
+            //builder.Services.AddScoped<IUserPageService, UserPageService>();
             builder.Services.AddScoped<IAdminPageService, AdminPageService>();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -84,8 +83,15 @@ namespace Visas
                         .AllowCredentials();
                 });
             });
-            var app = builder.Build(); 
-            // Configure the HTTP request pipeline.
+            var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.Database.Migrate();
+            }
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

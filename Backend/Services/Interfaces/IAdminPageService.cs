@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using CSharpFunctionalExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,13 @@ namespace Services.Interfaces
 {
     public interface IAdminPageService
     {
-        public Task DeletePageAsync(int id);
-        public Task<Page> CreatePageAsync(Page page);
-        public Task<Page> CreatePageAsync(Page page, int parentID);
-        public Task<Page> UpdatePageAsync(Page page);
-        public Task<Page> GetPageByIdAsync(int id);
-        public Task<List<Page>> GetAllActivePagesAsync();
-        public Task<List<Page>> GetAllPagesAsycn();
-        public Task<Page> GetPageBySlagAsync(string slug);
+        Task<List<Page>> GetAllActivePagesAsync();
+        Task<List<Page>> GetAllPagesAsycn();
+        Task<Result<Page>> GetPageByIdAsync(Guid id);
+        Task<Result> UpdatePageAsync(Page page);
+        Task<Result<Page>> CreatePageAsync(Page page);
+        Task<Result<Page>> CreatePageAsync(Page page, Guid parentId);
+        Task DeletePageAsync(Guid id);
+        Task<Result<Page>> GetPageByPathAsync(string path);
     }
 }

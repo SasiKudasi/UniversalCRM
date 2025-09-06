@@ -9,14 +9,13 @@ namespace DAL.Interfaces
 {
     public interface IPageRepository
     {
-        Task<PageEntity?> GetPageBySlugAsync(string slug);
-        Task<PageEntity?> GetPageByIdAsync(int id);
+        Task<PageEntity?> GetPageByPathAsync(string slug);
+        Task<PageEntity?> GetPageByIdAsync(Guid id);
         Task<List<PageEntity>> GetAllActivePagesAsync();
         Task<PageEntity> CreatePageAsync(PageEntity page);
-        Task<PageEntity> UpdatePageAsync(PageEntity page);
-        Task DeletePageAsync(int id);
-        Task<List<PageEntity>> GetChildPagesAsync(int parentId);
-        Task<PageEntity?> GetPageBySlugPathAsync(string[] slugPath);
+        Task UpdatePageAsync(PageEntity page);
+        Task DeletePageAsync(Guid id);
+        Task<List<PageEntity>> GetChildPagesAsync(Guid parentId);
         public Task<List<PageEntity>> GetAllPages();
 
     }

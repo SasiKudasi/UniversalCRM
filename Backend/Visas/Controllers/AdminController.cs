@@ -60,9 +60,9 @@ namespace Visas.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
 
-        public async Task<ActionResult<string>> DeletePage(int id)
+        public async Task<ActionResult<string>> DeletePage(Guid id)
         {
             await _adminPageService.DeletePageAsync(id);
             _logger.LogInformation($"Удалена страница: {id}");
@@ -77,45 +77,55 @@ namespace Visas.Controllers
                 return BadRequest("Page data is required");
             }
 
-            var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page));
-            if (createdPage == null)
+            var pageToDomain = PageMapper.ToDomain(page);
+            if (pageToDomain.IsFailure)
             {
-                return BadRequest("Что то пошло не так при создании страницы");
+                return BadRequest(pageToDomain.Error);
             }
 
-            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPage.Title} | {createdPage.Id}");
-            return Ok(createdPage);
+            var createdPage = await _adminPageService.CreatePageAsync(pageToDomain.Value);
+
+            if (createdPage.IsFailure)
+            {
+                return BadRequest(createdPage.Error);
+            }
+
+            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPage.Value.Title} | {createdPage.Value.Id}");
+            return Created($"{createdPage.Value.Path}", createdPage.Value.Id);
         }
 
         [HttpPost("with_parent")]
-        public async Task<ActionResult<Page>> CreatePageWithParent([FromForm] PageRequestDTO page, int parentID)
+        public async Task<IActionResult> CreatePageWithParent([FromForm] PageRequestDTO page, Guid parentID)
         {
             if (page == null)
             {
                 return BadRequest("Page data is required");
             }
-
-            var createdPage = await _adminPageService.CreatePageAsync(PageMapper.ToDomain(page), parentID);
-            if (createdPage == null)
+            var pageToDomain = PageMapper.ToDomain(page);
+            if (pageToDomain.IsFailure)
             {
-                return BadRequest("Что то пошло не так при создании страницы");
+                return BadRequest(pageToDomain.Error);
             }
-
-            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPage.Title} | {createdPage.Id}");
-            return Ok(createdPage);
+            var createdPage = await _adminPageService.CreatePageAsync(pageToDomain.Value, parentID);
+            if (createdPage.IsFailure)
+            {
+                return BadRequest(createdPage.Error);
+            }
+            var createdPageResult = createdPage.Value;
+            _logger.LogInformation($"{DateTime.Now} : Создана страница {createdPageResult.Title} | {createdPageResult.Id}");
+            return Created($"{createdPageResult.Path}", createdPageResult.Id);
         }
 
         [HttpGet("all_active_page")]
-        public async Task<ActionResult<IEnumerable<PageResponseWhithChildrenDTO>>> GetAllActivePages()
+        public async Task<IActionResult> GetAllActivePages()
         {
             var pages = await _adminPageService.GetAllActivePagesAsync();
             var pagesResponse = pages.Select(p => p.ToResponseWhithChildren());
-
             return Ok(pagesResponse);
         }
 
         [HttpGet("all_page")]
-        public async Task<ActionResult<IEnumerable<SoloPageResponceDTO>>> GetAllPages()
+        public async Task<IActionResult> GetAllPages()
         {
             var pages = await _adminPageService.GetAllPagesAsycn();
             var pagesResponse = pages.Select(p => p.ToResponse());
@@ -124,40 +134,45 @@ namespace Visas.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Page>> GetPageById(int id)
+        public async Task<IActionResult> GetPageById(Guid id)
         {
             var page = await _adminPageService.GetPageByIdAsync(id);
-            if (page == null)
+            if (page.IsFailure)
             {
-                return NotFound("Page not found");
+                return BadRequest(page.Error);
             }
-            return Ok(page);
+            return Ok(page.Value);
         }
 
         [HttpPut]
-        public async Task<ActionResult<Page>> UpdatePage([FromBody] Page page)
+        public async Task<IActionResult> UpdatePage([FromBody] Page page)
         {
-            if (page == null || page.Id <= 0)
+            if (page == null)
             {
                 return BadRequest("Valid page data is required for update");
             }
 
             var updatedPage = await _adminPageService.UpdatePageAsync(page);
-            if (updatedPage == null)
+            if (updatedPage.IsFailure)
             {
-                return BadRequest("Что то пошло не так при обновлении страницы");
+                return BadRequest(updatedPage.Error);
             }
 
             _logger.LogInformation($"{DateTime.Now} : Обновлена страница {page.Title} | {page.Id}");
-            return Ok(updatedPage);
+            return Ok();
         }
 
 
-        [HttpGet("page_by_slag")]
-        public async Task<ActionResult<PageRequestDTO>> GetPageBySlag(string slag)
+        [HttpGet("page_by_path")]
+        public async Task<IActionResult> GetPageByPath(string path)
         {
-            var pages = await _adminPageService.GetPageBySlagAsync(slag);
-            return Ok(pages.ToResponseWhithChildren());
+            var pagesResult = await _adminPageService.GetPageByPathAsync(path);
+            if (pagesResult.IsFailure)
+            {
+                return BadRequest(pagesResult.Error);
+            }
+            var page = pagesResult.Value;
+            return Ok(page.ToResponseWhithChildren());
         }
 
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 interface Page {
     id: number;
     title: string;
+    path: string;
 }
 
 
@@ -29,7 +30,7 @@ export default function GetAllPages() {
             <h1>Страницы:</h1>
             <ul>
                 {pages.map(page => (
-                    <li key={page.id}>{page.title}</li>
+                    <li key={page.id}> {page.path} {page.title} </li>
                 ))}
             </ul>
         </div>

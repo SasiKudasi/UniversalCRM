@@ -9,7 +9,7 @@ namespace Services.Interfaces
 {
     public interface IUserPageService
     {
-        public Task<Page> GetPageBySlagAsync(string slug);
+        //public Task<Page> GetPageBySlagAsync(string slug);
 
     }
 }

@@ -12,17 +12,18 @@ namespace DAL.Repository
             _context = context;
         }
 
-
-        public async Task<PageEntity?> GetPageBySlugAsync(string slug)
+        public async Task<PageEntity?> GetPageByPathAsync(string path)
         {
             return await _context.Pages
+                .AsNoTracking()
                 .Include(p => p.Children)
-                .FirstOrDefaultAsync(p => p.Slug == slug && p.IsActive);
+                .FirstOrDefaultAsync(p => p.Path == path && p.IsActive);
         }
 
-        public async Task<PageEntity?> GetPageByIdAsync(int id)
+        public async Task<PageEntity?> GetPageByIdAsync(Guid id)
         {
             return await _context.Pages
+                .AsNoTracking()
                 .Include(p => p.Children)
                 .FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
         }
@@ -50,17 +51,16 @@ namespace DAL.Repository
             return page;
         }
 
-        public async Task<PageEntity> UpdatePageAsync(PageEntity page)
+        public async Task UpdatePageAsync(PageEntity page)
         {
             _context.Pages.Update(page);
             await _context.SaveChangesAsync();
-            return page;
         }
 
 
-        public async Task DeletePageAsync(int id)
+        public async Task DeletePageAsync(Guid id)
         {
-            var page = await _context.Pages.FindAsync(id);
+            var page = await _context.Pages.FirstOrDefaultAsync(p => p.Id == id);
             if (page != null)
             {
                 _context.Pages.Remove(page);
@@ -68,35 +68,12 @@ namespace DAL.Repository
             }
         }
 
-        public async Task<List<PageEntity>> GetChildPagesAsync(int parentId)
+        public async Task<List<PageEntity>> GetChildPagesAsync(Guid parentId)
         {
             return await _context.Pages
                 .Where(p => p.ParentId == parentId && p.IsActive)
                 .Include(p => p.Children)
                 .ToListAsync();
         }
-
-        public async Task<PageEntity?> GetPageBySlugPathAsync(string[] slugPath)
-        {
-            PageEntity? current = null;
-
-            foreach (var slug in slugPath)
-            {
-                current = await _context.Pages
-                    .Include(p => p.Children)
-                    .FirstOrDefaultAsync(p =>
-                        p.Slug == slug &&
-                        p.ParentId == (current == null ? null : current.Id) &&
-                        p.IsActive);
-
-                if (current == null)
-                    return null;
-            }
-
-            return current;
-        }
-
     }
-
-
 }

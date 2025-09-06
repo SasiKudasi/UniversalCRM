@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using CSharpFunctionalExtensions;
 using DAL.Entity;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace Services.Mappers
 {
     internal static class PageMapper
     {
-        public static Page ToDomain(this PageEntity entity, HashSet<int>? visited = null)
+        public static Result<Page> ToDomain(this PageEntity entity, HashSet<Guid>? visited = null)
         {
-            visited ??= new HashSet<int>();
+            visited ??= new HashSet<Guid>();
 
             if (visited.Contains(entity.Id))
             {
@@ -21,34 +22,43 @@ namespace Services.Mappers
             }
             visited.Add(entity.Id);
 
-            var page = Page.Create(
+            var pageResult = Page.Create(
                 id: entity.Id,
                title: entity.Title,
-               slug: entity.Slug,
+               path: entity.Path,
                content: entity.HtmlContent,
                metaTitle: entity.MetaTitle,
-               metaDescription: entity.MetaDescription,
-               metaKeywords: entity.MetaKeywords
+               metaDiscr: entity.MetaDescription,
+               metaKeywords: entity.MetaKeywords,
+               isActive: entity.IsActive,
+               isRoot: entity.IsRootPage,
+               ordinalNum: entity.OrdinalNuber
 
              );
-            page.SetCreatedAt(entity.CreatedAt);
-            page.SetUpdatedAt(entity.UpdatedAt);
-            page.SetActive(entity.IsActive);
+            if (pageResult.IsFailure)
+            {
+                return Result.Failure<Page>(pageResult.Error);
 
+            }
             //if (entity.Parent != null)
             //{
             //    var parentDomain = entity.Parent.ToDomain();
             //    page.SetParent(parentDomain);
             //}
-
+            var page = pageResult.Value;
             foreach (var childEntity in entity.Children)
             {
                 var childDomain = childEntity.ToDomain(visited);
-                if (childDomain != null)
-                    page.AddChild(childDomain);
+                if (childDomain.IsSuccess)
+                {
+                    page.AddChild(childDomain.Value);
+                }
+
+                //if (childDomain != null)
+                //    page.AddChild(childDomain);
             }
 
-            return page;
+            return Result.Success(page);
         }
 
 
@@ -56,18 +66,20 @@ namespace Services.Mappers
         {
             if (page == null) return null!;
 
-            var entity = new DAL.Entity.PageEntity
+            var entity = new PageEntity
             {
                 Id = page.Id,
                 Title = page.Title,
-                Slug = page.Slug,
+                Path = page.Path,
                 HtmlContent = page.Content,
                 MetaTitle = page.MetaTitle,
                 MetaDescription = page.MetaDescription,
                 IsActive = page.IsActive,
+                IsRootPage = page.IsRootPage,
+                OrdinalNuber = page.OrdinalNuber,
                 CreatedAt = page.CreatedAt,
                 UpdatedAt = page.UpdatedAt,
-                ParentId = page.ParentId
+                ParentId = page.ParentId,
             };
 
             // Родитель

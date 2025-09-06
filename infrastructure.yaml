@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: crm_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" 
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:management 
+    container_name: rabbitmq_server
+    ports:
+      - "5672:5672" 
+      - "15672:15672" 
+    networks:
+      - app_network
+
+  redis:
+    image: redis:latest #
+    container_name: redis_cache
+    ports:
+      - "6379:6379" 
+    volumes:
+      - redis_data:/data 
+    networks:
+      - app_network
+
+volumes:
+  postgres_data: 
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

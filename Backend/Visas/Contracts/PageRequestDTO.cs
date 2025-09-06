@@ -3,7 +3,8 @@
     public class PageRequestDTO
     {
         public string Title { get; set; } = null!;
-        public string Slug { get; set; } = null!;
+        public string Path { get; set; } = null!;
+        public int OrdinalNum { get; set; }
         public string? Content { get; set; }
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }

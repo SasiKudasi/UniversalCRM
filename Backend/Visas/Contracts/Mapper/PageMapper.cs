@@ -1,24 +1,27 @@
 ﻿using Core.Models;
+using CSharpFunctionalExtensions;
 
 namespace Visas.Contracts.Mapper
 {
     public static class PageMapper
     {
-        public static Page ToDomain(this PageRequestDTO dto)
+        public static Result<Page> ToDomain(this PageRequestDTO dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
-
+            var pageId = Guid.NewGuid();
             var page = Page.Create(
+                id: pageId,
                 title: dto.Title,
-                slug: dto.Slug,
+                path: dto.Path,
                 content: dto.Content,
+                isActive: dto.IsActive,
+                isRoot: false,
+                ordinalNum: dto.OrdinalNum,
                 metaTitle: dto.MetaTitle,
-                metaDescription: dto.MetaDescription,
+                metaDiscr: dto.MetaDescription,
                 metaKeywords: dto.MetaKeywords
             );
-
-            page.SetActive(dto.IsActive);
             return page;
         }
 
@@ -29,12 +32,14 @@ namespace Visas.Contracts.Mapper
             {
                 Id = page.Id,
                 Title = page.Title,
-                Slug = page.Slug,
+                Path = page.Path,
                 Content = page.Content,
                 MetaTitle = page.MetaTitle,
                 MetaDescription = page.MetaDescription,
                 MetaKeywords = page.MetaKeywords,
                 IsActive = page.IsActive,
+                IsRoot = page.IsRootPage,
+                OrdinalNum = page.OrdinalNuber,
                 Children = page.Children.Select(c => c.ToResponseWhithChildren()).ToList()
             };
         }
@@ -45,7 +50,7 @@ namespace Visas.Contracts.Mapper
             {
                 Id = page.Id,
                 Title = page.Title,
-                Slug = page.Slug,
+                Path = page.Path,
                 Content = page.Content,
                 MetaTitle = page.MetaTitle,
                 MetaDescription = page.MetaDescription,

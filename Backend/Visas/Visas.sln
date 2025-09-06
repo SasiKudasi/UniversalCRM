@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "..\Services\Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\Core\Core.csproj", "{B2801806-D20B-4E41-A3DB-B049CD08CB27}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MainApp", "MainApp", "{36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{E44914F0-E6BE-47DD-B580-51E4AF24CA36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{36D46488-848B-4209-94C8-F6130FE6DBE8} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{95E42598-B572-4645-AE78-22E96C61BEC3} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{A3D425E1-696A-4056-92C9-45ECEB4A1361} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{B2801806-D20B-4E41-A3DB-B049CD08CB27} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB99E297-DD3C-404A-BCB3-1A1ECA5223C3}

@@ -14,9 +14,9 @@ namespace DAL
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<PageEntity>()
-                .HasIndex(p => new { p.ParentId, p.Slug })
-                .IsUnique(); // Уникальность слага в пределах родителя
-
+                .HasIndex(p => p.Path)
+                .IsUnique();
+            
             modelBuilder.Entity<PageEntity>()
                 .HasMany(p => p.Children)
                 .WithOne(p => p.Parent)

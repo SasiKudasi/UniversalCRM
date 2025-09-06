@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using CSharpFunctionalExtensions;
 using DAL.Interfaces;
 using Services.Interfaces;
 using Services.Mappers;
@@ -23,80 +24,81 @@ namespace Services
         public async Task<List<Page>> GetAllActivePagesAsync()
         {
             var entities = await _pageRepository.GetAllActivePagesAsync();
-            return entities.Select(e => e.ToDomain()).ToList();
+            return entities.Select(e => e.ToDomain().Value).ToList();
         }
 
         public async Task<List<Page>> GetAllPagesAsycn()
         {
             var entities = await _pageRepository.GetAllPages();
-            return entities.Select(e => e.ToDomain()).ToList();
+            return entities.Select(e => e.ToDomain().Value).ToList();
         }
 
-        public async Task<Page> GetPageByIdAsync(int id)
+        public async Task<Result<Page>> GetPageByIdAsync(Guid id)
         {
             var entity = await _pageRepository.GetPageByIdAsync(id);
-            return entity?.ToDomain() ?? throw new Exception($"Page with ID {id} not found");
+            if (entity is null)
+            {
+                return Result.Failure<Page>($"Page with ID {id} not found");
+            }
+            return entity.ToDomain();
         }
 
-        public async Task<Page> UpdatePageAsync(Page page)
+        public async Task<Result> UpdatePageAsync(Page page)
         {
             var entity = page.ToDAL();
-            if (entity == null) throw new ArgumentNullException(nameof(page), "Page cannot be null");
-
-            var updatedEntity = await _pageRepository.UpdatePageAsync(entity);
-            return updatedEntity.ToDomain();
+            if (entity == null)
+            {
+                return Result.Failure("Page cannot be null");
+            }
+            await _pageRepository.UpdatePageAsync(entity);
+            return Result.Success();
         }
 
-        public async Task<Page> CreatePageAsync(Page page)
+        public async Task<Result<Page>> CreatePageAsync(Page page)
         {
             var entity = page.ToDAL();
-            if (entity == null) throw new ArgumentNullException(nameof(page), "Page cannot be null");
+            if (entity == null)
+            {
+                return Result.Failure<Page>("Page cannot be null");
+            }
+            var createdEntity = await _pageRepository.CreatePageAsync(entity);
+            return createdEntity.ToDomain();
+        }
+
+        public async Task<Result<Page>> CreatePageAsync(Page page, Guid parentId)
+        {
+            var parent = await _pageRepository.GetPageByIdAsync(parentId);
+            if (parent is null)
+            {
+                return Result.Failure<Page>($"Parent page with ID {parentId} not found");
+            }
+            var entity = page.ToDAL();
+            if (entity == null)
+            {
+                return Result.Failure<Page>("Page cannot be null");
+            }
+            entity.Path = parent.Path + $"/{page.Path}";
+            entity.ParentId = parent.Id;
 
             var createdEntity = await _pageRepository.CreatePageAsync(entity);
             return createdEntity.ToDomain();
         }
 
-        public async Task<Page> CreatePageAsync(Page page, int parentId)
-        {
-            var parent = await _pageRepository.GetPageByIdAsync(parentId);
-            if (parent is null)            
-            {
-                throw new ArgumentNullException($"Parent page with ID {parentId} not found");
-            }
-            var entity = page.ToDAL();
 
-            entity.ParentId = parent.Id;
-            if (entity == null) throw new ArgumentNullException(nameof(page), "Page cannot be null");
-
-            var createdEntity = await _pageRepository.CreatePageAsync(entity);
-            var t = createdEntity.ToDomain();
-            return t;
-        }
-
-
-        public async Task DeletePageAsync(int id)
+        public async Task DeletePageAsync(Guid id)
         {
             await _pageRepository.DeletePageAsync(id);
         }
 
-
-        public async Task<Page> GetPageBySlagAsync(string slug)
+        public async Task<Result<Page>> GetPageByPathAsync(string path)
         {
-            var slugPath = slug.Split('/', StringSplitOptions.RemoveEmptyEntries);
-
-            if (slugPath.Length < 1)
+            var entity = await _pageRepository.GetPageByPathAsync(path);
+            if (entity == null)
             {
-                var homePage = await _pageRepository.GetPageBySlugAsync("");
-                return homePage.ToDomain();
+                return Result.Failure<Page>("Page not found");
             }
 
-            var pageEntity = await _pageRepository.GetPageBySlugPathAsync(slugPath);
-            if (pageEntity == null)
-            {
-                throw new FileNotFoundException($"Page with slug '{slug}' not found.");
-            }
-
-            return pageEntity.ToDomain();
+            return entity.ToDomain();
         }
     }
 }

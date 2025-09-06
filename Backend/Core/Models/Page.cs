@@ -1,41 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
 using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
     public class Page
     {
-        public int Id { get; private set; }
-
+        public Guid Id { get; set; }
         public string Title { get; private set; } = null!;
-
-        // URL-часть (например, "usa", "faq", "contacts")
-        public string Slug { get; private set; } = null!;
-
-        // HTML или rich-текст
+        public string Path { get; private set; }
         public string? Content { get; private set; }
-
+        public bool IsActive { get; private set; } = true;
+        public bool IsRootPage { get; set; } = false;
+        public int OrdinalNuber { get; set; }
         // SEO
         public string? MetaTitle { get; private set; }
         public string? MetaDescription { get; private set; }
         public string? MetaKeywords { get; private set; }
 
-        public bool IsActive { get; private set; } = true;
-
         // Иерархия
         [JsonIgnore]
-        public int? ParentId { get; private set; }
+        public Guid? ParentId { get; private set; }
         public Page? Parent { get; private set; }
         public List<Page> Children { get; private set; } = new();
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; private set; }
 
+
+        private Page(Guid id, string title,
+            string path, string content,
+            bool isActive, bool isRoot,
+            int ordinalNum, string metaTitle, string metaDiscr, string metaKeywords,
+            Guid? parentId = null, Page? parent = null)
+        {
+            Id = id;
+            Title = title;
+            Path = path;
+            Content = content;
+            IsActive = isActive;
+            IsRootPage = isRoot;
+            OrdinalNuber = ordinalNum;
+            MetaTitle = metaTitle;
+            MetaDescription = metaDiscr;
+            MetaKeywords = metaKeywords;
+            ParentId = parentId;
+            Parent = parent;
+        }
 
         public void UpdateTimestamps()
         {
@@ -59,7 +68,6 @@ namespace Core.Models
         public void SetCreatedAt(DateTime createdAt)
         {
             CreatedAt = createdAt;
-            // UpdateTimestamps();
         }
 
         public void SetUpdatedAt(DateTime updatedAt)
@@ -75,57 +83,28 @@ namespace Core.Models
             UpdateTimestamps();
         }
 
-        public static Page Create(string title, string slug, string? content = null,
-            string? metaTitle = null, string? metaDescription = null, string? metaKeywords = null
-            )
+        public static Result<Page> Create(Guid id, string title,
+            string path, string content,
+            bool isActive, bool isRoot,
+            int ordinalNum, string metaTitle, string metaDiscr, string metaKeywords,
+            Guid? parentId = null, Page? parent = null)
         {
-
-
             if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Title cannot be empty", nameof(title));
-            if (string.IsNullOrWhiteSpace(slug))
-                throw new ArgumentException("Slug cannot be empty", nameof(slug));
-            if (slug.Length > 200)
-                throw new ArgumentException("Slug cannot exceed 200 characters", nameof(slug));
-
-
-            return new Page
             {
-                Title = title,
-                Slug = slug,
-                Content = content,
-                MetaTitle = metaTitle,
-                MetaDescription = metaDescription,
-                MetaKeywords = metaKeywords
-            };
-        }
-
-
-        public static Page Create(int id, string title, string slug, string? content = null,
-    string? metaTitle = null, string? metaDescription = null, string? metaKeywords = null
-    )
-        {
-
-
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Title cannot be empty", nameof(title));
-            if (string.IsNullOrWhiteSpace(slug))
-                throw new ArgumentException("Slug cannot be empty", nameof(slug));
-            if (slug.Length > 200)
-                throw new ArgumentException("Slug cannot exceed 200 characters", nameof(slug));
-
-
-            return new Page
+                return Result.Failure<Page>("Title cannot be empty");
+            }
+            if (string.IsNullOrWhiteSpace(path))
             {
-                Id = id,
-                Title = title,
-                Slug = slug,
-                Content = content,
-                MetaTitle = metaTitle,
-                MetaDescription = metaDescription,
-                MetaKeywords = metaKeywords
-            };
-        }
+                return Result.Failure<Page>("Path cannot be empty");
+            }
+            var page = new Page(id, title, 
+                path, content, 
+                isActive, isRoot, 
+                ordinalNum, metaTitle,
+                metaDiscr, metaKeywords, 
+                parentId, parent);
 
+            return Result.Success<Page>(page);
+        }
     }
 }
