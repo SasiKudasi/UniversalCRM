@@ -1,7 +1,7 @@
 'use client';
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
-
+import { ListGroup } from "react-bootstrap";
 interface Page {
     id: number;
     title: string;
@@ -28,11 +28,13 @@ export default function GetAllPages() {
     return (
         <div>
             <h1>Страницы:</h1>
-            <ul>
-                {pages.map(page => (
-                    <li key={page.id}> {page.path} {page.title} </li>
+            <ListGroup>
+                {pages.map((page) => (
+                    <ListGroup.Item key={page.id}>
+                        <strong>{page.path}</strong> — {page.title}
+                    </ListGroup.Item>
                 ))}
-            </ul>
+            </ListGroup>
         </div>
     );
 }
