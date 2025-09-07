@@ -69,15 +69,15 @@ namespace Visas.Controllers
             return Ok("Page deleted successfully");
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Page>> CreatePage([FromForm] PageRequestDTO page)
+        [HttpPost("root")]
+        public async Task<IActionResult> CreatePage([FromForm] PageRequestDTO page)
         {
             if (page == null)
             {
                 return BadRequest("Page data is required");
             }
 
-            var pageToDomain = PageMapper.ToDomain(page);
+            var pageToDomain = PageMapper.ToDomain(page, true);
             if (pageToDomain.IsFailure)
             {
                 return BadRequest(pageToDomain.Error);
@@ -101,7 +101,7 @@ namespace Visas.Controllers
             {
                 return BadRequest("Page data is required");
             }
-            var pageToDomain = PageMapper.ToDomain(page);
+            var pageToDomain = PageMapper.ToDomain(page, false);
             if (pageToDomain.IsFailure)
             {
                 return BadRequest(pageToDomain.Error);

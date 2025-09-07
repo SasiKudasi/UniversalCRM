@@ -5,7 +5,7 @@ namespace Visas.Contracts.Mapper
 {
     public static class PageMapper
     {
-        public static Result<Page> ToDomain(this PageRequestDTO dto)
+        public static Result<Page> ToDomain(this PageRequestDTO dto, bool isRoot)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -16,7 +16,7 @@ namespace Visas.Contracts.Mapper
                 path: dto.Path,
                 content: dto.Content,
                 isActive: dto.IsActive,
-                isRoot: false,
+                isRoot: isRoot,
                 ordinalNum: dto.OrdinalNum,
                 metaTitle: dto.MetaTitle,
                 metaDiscr: dto.MetaDescription,

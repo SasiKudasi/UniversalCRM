@@ -2,9 +2,10 @@
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
+import { pageService } from '../services/pageService';
 
 interface Page {
-    id: number;
+    id: string;
     title: string;
     path: string;
 }
@@ -28,6 +29,13 @@ export default function GetAllPages() {
             });
     }, []);
 
+    async function handleDelete(id: string) {
+        var response = await pageService.delete(id);
+        if (response.status == 200) {
+            window.location.reload();
+        }
+    }
+
     if (loading) return <p>Загрузка...</p>;
 
     return (
@@ -48,7 +56,7 @@ export default function GetAllPages() {
                             <td>{page.title}</td>
                             <td>
                                 <Button
-                                    variant="primary"
+                                    variant="info"
                                     size="sm"
                                     className="me-2"
                                     onClick={() => window.open("/" + page.path, "_blank")}
@@ -60,6 +68,13 @@ export default function GetAllPages() {
                                     size="sm"
                                 >
                                     Обновить
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="danger"
+                                    onClick={() => handleDelete(page.id)}
+                                >
+                                    Удалить
                                 </Button>
                             </td>
                         </tr>
