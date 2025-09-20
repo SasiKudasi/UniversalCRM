@@ -9,14 +9,14 @@ export const CreateRootPageForm = () => {
     const router = useRouter();
 
     const [formData, setFormData] = useState<RootPage>({
-        Title: '',
-        Path: '',
-        OrdinalNum: 0,
-        Content: '',
-        MetaTitle: '',
-        MetaDescription: '',
-        MetaKeywords: '',
-        IsActive: true
+        title: '',
+        path: '',
+        ordinalNum: 0,
+        content: '',
+        metaTitle: '',
+        metaDescription: '',
+        metaKeywords: '',
+        isActive: true
     });
     const [error, setError] = useState<string | null>(null);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -51,8 +51,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Title</Form.Label>
                     <Form.Control
                         type="text"
-                        name="Title"
-                        value={formData.Title}
+                        name="title"
+                        value={formData.title}
                         required
                         onChange={handleChange}
                     />
@@ -62,8 +62,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Path</Form.Label>
                     <Form.Control
                         type="text"
-                        name="Path"
-                        value={formData.Path}
+                        name="path"
+                        value={formData.path}
                         required
                         onChange={handleChange}
                     />
@@ -73,8 +73,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Порядковый номер</Form.Label>
                     <Form.Control
                         type="number"
-                        name="OrdinalNum"
-                        value={formData.OrdinalNum}
+                        name="ordinalNum"
+                        value={formData.ordinalNum}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -84,8 +84,8 @@ export const CreateRootPageForm = () => {
                     <Form.Control
                         as="textarea"
                         rows={5}
-                        name="Content"
-                        value={formData.Content}
+                        name="content"
+                        value={formData.content}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -94,8 +94,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Meta Title</Form.Label>
                     <Form.Control
                         type="text"
-                        name="MetaTitle"
-                        value={formData.MetaTitle}
+                        name="metaTitle"
+                        value={formData.metaTitle}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -105,8 +105,8 @@ export const CreateRootPageForm = () => {
                     <Form.Control
                         as="textarea"
                         rows={3}
-                        name="MetaDescription"
-                        value={formData.MetaDescription}
+                        name="metaDescription"
+                        value={formData.metaDescription}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -115,8 +115,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Meta Keywords</Form.Label>
                     <Form.Control
                         type="text"
-                        name="MetaKeywords"
-                        value={formData.MetaKeywords}
+                        name="metaKeywords"
+                        value={formData.metaKeywords}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -125,8 +125,8 @@ export const CreateRootPageForm = () => {
                     <Form.Check
                         type="checkbox"
                         label="Активна?"
-                        name="IsActive"
-                        checked={formData.IsActive}
+                        name="isActive"
+                        checked={formData.isActive}
                         onChange={handleChange}
                     />
                 </Form.Group>

@@ -141,18 +141,21 @@ namespace Visas.Controllers
             {
                 return BadRequest(page.Error);
             }
-            return Ok(page.Value);
+            return Ok(page.Value.ToResponse());
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdatePage([FromBody] Page page)
+        [HttpPatch("{pageId:guid}")]
+        public async Task<IActionResult> UpdatePage(
+            [FromRoute] Guid pageId,
+            [FromBody] UpdatePageRequest request)
         {
-            if (page == null)
+            var pageResult = PageMapper.ToDomain(request, false);
+            if (pageResult.IsFailure)
             {
                 return BadRequest("Valid page data is required for update");
             }
-
-            var updatedPage = await _adminPageService.UpdatePageAsync(page);
+            var page = pageResult.Value;
+            var updatedPage = await _adminPageService.UpdatePageAsync(pageId, page);
             if (updatedPage.IsFailure)
             {
                 return BadRequest(updatedPage.Error);

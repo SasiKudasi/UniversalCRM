@@ -43,14 +43,42 @@ namespace Services
             return entity.ToDomain();
         }
 
-        public async Task<Result> UpdatePageAsync(Page page)
+        public async Task<Result> UpdatePageAsync(Guid pageId, Page pageRequest)
         {
-            var entity = page.ToDAL();
-            if (entity == null)
+            var page = await _pageRepository.GetPageByIdAsync(pageId);
+            if (page is null)
             {
-                return Result.Failure("Page cannot be null");
+                return Result.Failure($"Page {pageId} not found");
             }
-            await _pageRepository.UpdatePageAsync(entity);
+
+            if (pageRequest.Title is not null)
+            {
+                page.Title = pageRequest.Title;
+            }
+            if (pageRequest.Path is not null)
+            {
+                page.Path = pageRequest.Path;
+            }
+            if (pageRequest.Content is not null)
+            {
+                page.HtmlContent = pageRequest.Content;
+            }
+            page.IsActive = pageRequest.IsActive;
+            page.OrdinalNuber = pageRequest.OrdinalNuber;
+
+            if (pageRequest.MetaTitle is not null)
+            {
+                page.MetaTitle = pageRequest.MetaTitle;
+            }
+            if (pageRequest.MetaDescription is not null)
+            {
+                page.MetaDescription = pageRequest.MetaDescription;
+            }
+            if (pageRequest.MetaKeywords is not null)
+            {
+                page.MetaKeywords = pageRequest.MetaKeywords;
+            }
+            await _pageRepository.UpdatePageAsync(page);
             return Result.Success();
         }
 

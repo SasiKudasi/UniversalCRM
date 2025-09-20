@@ -25,6 +25,26 @@ namespace Visas.Contracts.Mapper
             return page;
         }
 
+        public static Result<Page> ToDomain(this UpdatePageRequest dto, bool isRoot)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+            var pageId = Guid.NewGuid();
+            var page = Page.Create(
+                id: pageId,
+                title: dto.Title,
+                path: dto.Path,
+                content: dto.Content,
+                isActive: dto.IsActive,
+                isRoot: isRoot,
+                ordinalNum: dto.OrdinalNum,
+                metaTitle: dto.MetaTitle,
+                metaDiscr: dto.MetaDescription,
+                metaKeywords: dto.MetaKeywords
+            );
+            return page;
+        }
+
 
         public static PageResponseWhithChildrenDTO ToResponseWhithChildren(this Page page)
         {

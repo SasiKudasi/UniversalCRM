@@ -6,33 +6,14 @@ import { Button, Container, Form } from "react-bootstrap";
 import { pageService } from '../services/pageService';
 import { RootPage } from "../types/RootPage";
 
-interface Page {
-    id: string;
-    title: string;
-    path: string;
-}
-
 interface UpdatePageFormProps {
-    pageId: string; // <-- сюда будем передавать id страницы
+    pageId: string;
 }
 
 export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
     const router = useRouter();
-
-    const [pages, setPages] = useState<Page[]>([]);
-
-    useEffect(() => {
-        api.get("/admin/all_page", {
-            headers: { Accept: "application/json" },
-            withCredentials: true,
-        })
-            .then(res => {
-                setPages(res.data);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    }, []);
+    const [formData, setFormData] = useState<RootPage | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!pageId) return;
@@ -48,26 +29,19 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
             });
     }, [pageId]);
 
-
-
-    const [formData, setFormData] = useState<RootPage | null>(null);
-
-    const [parentPage, setParentPage] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value, type, checked } = e.target as HTMLInputElement;
 
-        setFormData((prev) =>
-            prev
-                ? {
-                    ...prev,
-                    [name]: type === "checkbox" ? checked : value,
-                }
-                : prev
-        );
+        if (!formData) return;
+
+        setFormData({
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
+        });
     };
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
@@ -77,9 +51,9 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                 setError("Данные страницы не загружены");
                 return;
             }
-            const response = await pageService.createChild(parentPage, formData);
+            const response = await pageService.update(pageId, formData);
             console.log(response.status)
-            if (response.status == 201) {
+            if (response.status == 200) {
                 router.push("/admin/dashboard/get_all_pages");
             }
         }
@@ -94,19 +68,12 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
     return (
         <Container className="mt-4">
             <Form onSubmit={handleSubmit}>
-                <Form.Select onChange={(e) => setParentPage(e.target.value)}>
-                    {pages.map((page) => (
-                        <option key={page.id} value={page.id}>
-                            Имя: {page.title} | путь: {page.path}
-                        </option>
-                    ))}
-                </Form.Select>
                 <Form.Group className="mb-3">
                     <Form.Label>Title</Form.Label>
                     <Form.Control
                         type="text"
-                        name="Title"
-                        value={formData.Title}
+                        name="title"
+                        value={formData.title}
                         required
                         onChange={handleChange}
                     />
@@ -116,8 +83,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Label>Path</Form.Label>
                     <Form.Control
                         type="text"
-                        name="Path"
-                        value={formData.Path}
+                        name="path"
+                        value={formData.path}
                         required
                         onChange={handleChange}
                     />
@@ -127,8 +94,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Label>Порядковый номер</Form.Label>
                     <Form.Control
                         type="number"
-                        name="OrdinalNum"
-                        value={formData.OrdinalNum}
+                        name="ordinalNum"
+                        value={formData.ordinalNum ?? ""}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -138,8 +105,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Control
                         as="textarea"
                         rows={5}
-                        name="Content"
-                        value={formData.Content}
+                        name="content"
+                        value={formData.content}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -148,8 +115,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Label>Meta Title</Form.Label>
                     <Form.Control
                         type="text"
-                        name="MetaTitle"
-                        value={formData.MetaTitle}
+                        name="metaTitle"
+                        value={formData.metaTitle}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -159,8 +126,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Control
                         as="textarea"
                         rows={3}
-                        name="MetaDescription"
-                        value={formData.MetaDescription}
+                        name="metaDescription"
+                        value={formData.metaDescription}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -169,8 +136,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Label>Meta Keywords</Form.Label>
                     <Form.Control
                         type="text"
-                        name="MetaKeywords"
-                        value={formData.MetaKeywords}
+                        name="metaKeywords"
+                        value={formData.metaKeywords || ""}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -179,14 +146,13 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Check
                         type="checkbox"
                         label="Активна?"
-                        name="IsActive"
-                        checked={formData.IsActive}
+                        name="isActive"
+                        checked={formData.isActive}
                         onChange={handleChange}
                     />
                 </Form.Group>
-
                 <Button type="submit" variant="primary">
-                    Создать
+                    Обновить
                 </Button>
                 {error && <p style={{ color: "red" }}>{error}</p>}
             </Form>

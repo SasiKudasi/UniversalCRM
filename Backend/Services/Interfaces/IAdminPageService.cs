@@ -13,7 +13,7 @@ namespace Services.Interfaces
         Task<List<Page>> GetAllActivePagesAsync();
         Task<List<Page>> GetAllPagesAsycn();
         Task<Result<Page>> GetPageByIdAsync(Guid id);
-        Task<Result> UpdatePageAsync(Page page);
+        Task<Result> UpdatePageAsync(Guid pageId, Page page);
         Task<Result<Page>> CreatePageAsync(Page page);
         Task<Result<Page>> CreatePageAsync(Page page, Guid parentId);
         Task DeletePageAsync(Guid id);

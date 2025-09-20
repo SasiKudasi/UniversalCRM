@@ -4,14 +4,14 @@ export const pageService = {
   createRoot: async (RootPage: RootPage) => {
     const formData = new FormData();
 
-    formData.append('Title', RootPage.Title);
-    formData.append('Path', RootPage.Path);
-    formData.append('OrdinalNum', RootPage.OrdinalNum.toString());
-    formData.append('Content', RootPage.Content);
-    formData.append('MetaTitle', RootPage.MetaTitle);
-    formData.append('MetaDescription', RootPage.MetaDescription);
-    formData.append('MetaKeywords', RootPage.MetaKeywords);
-    formData.append('IsActive', RootPage.IsActive.toString());
+    formData.append('Title', RootPage.title);
+    formData.append('Path', RootPage.path);
+    formData.append('OrdinalNum', RootPage.ordinalNum.toString());
+    formData.append('Content', RootPage.content);
+    formData.append('MetaTitle', RootPage.metaTitle);
+    formData.append('MetaDescription', RootPage.metaDescription);
+    formData.append('MetaKeywords', RootPage.metaKeywords);
+    formData.append('IsActive', RootPage.isActive.toString());
 
 
     const response = await api.post("/admin/root", formData, {
@@ -25,14 +25,14 @@ export const pageService = {
 
   createChild: async (parentId: string, RootPage: RootPage) => {
     const formData = new FormData();
-    formData.append('Title', RootPage.Title);
-    formData.append('Path', RootPage.Path);
-    formData.append('OrdinalNum', RootPage.OrdinalNum.toString());
-    formData.append('Content', RootPage.Content);
-    formData.append('MetaTitle', RootPage.MetaTitle);
-    formData.append('MetaDescription', RootPage.MetaDescription);
-    formData.append('MetaKeywords', RootPage.MetaKeywords);
-    formData.append('IsActive', RootPage.IsActive.toString());
+    formData.append('Title', RootPage.title);
+    formData.append('Path', RootPage.path);
+    formData.append('OrdinalNum', RootPage.ordinalNum.toString());
+    formData.append('Content', RootPage.content);
+    formData.append('MetaTitle', RootPage.metaTitle);
+    formData.append('MetaDescription', RootPage.metaDescription);
+    formData.append('MetaKeywords', RootPage.metaKeywords);
+    formData.append('IsActive', RootPage.isActive.toString());
 
 
     const response = await api.post("/admin/with_parent?parentID=" + parentId, formData, {
@@ -45,15 +45,24 @@ export const pageService = {
   },
 
   update: async (id: string, RootPage: RootPage) => {
-    const formData = new FormData();
-    formData.append('Title', RootPage.Title);
-    formData.append('Path', RootPage.Path);
-    formData.append('OrdinalNum', RootPage.OrdinalNum.toString());
-    formData.append('Content', RootPage.Content);
-    formData.append('MetaTitle', RootPage.MetaTitle);
-    formData.append('MetaDescription', RootPage.MetaDescription);
-    formData.append('MetaKeywords', RootPage.MetaKeywords);
-    formData.append('IsActive', RootPage.IsActive.toString());
+    const payload = {
+      Title: RootPage.title,
+      Path: RootPage.path,
+      OrdinalNum: RootPage.ordinalNum,
+      Content: RootPage.content,
+      MetaTitle: RootPage.metaTitle,
+      MetaDescription: RootPage.metaDescription,
+      MetaKeywords: RootPage.metaKeywords,
+      IsActive: RootPage.isActive,
+    };
+
+    const response = await api.patch("admin/" + id, payload, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
   },
 
   delete: async (id: string) => {
