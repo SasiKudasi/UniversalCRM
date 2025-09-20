@@ -71,6 +71,7 @@ namespace Visas.Contracts.Mapper
                 Id = page.Id,
                 Title = page.Title,
                 Path = page.Path,
+                OrdinalNuber = page.OrdinalNuber,
                 Content = page.Content,
                 MetaTitle = page.MetaTitle,
                 MetaDescription = page.MetaDescription,

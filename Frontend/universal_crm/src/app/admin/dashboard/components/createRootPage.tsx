@@ -11,7 +11,7 @@ export const CreateRootPageForm = () => {
     const [formData, setFormData] = useState<RootPage>({
         title: '',
         path: '',
-        ordinalNum: 0,
+        ordinalNuber: 0,
         content: '',
         metaTitle: '',
         metaDescription: '',
@@ -45,7 +45,7 @@ export const CreateRootPageForm = () => {
     }
 
     return (
-        <Container className="mt-4">
+
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Title</Form.Label>
@@ -73,8 +73,8 @@ export const CreateRootPageForm = () => {
                     <Form.Label>Порядковый номер</Form.Label>
                     <Form.Control
                         type="number"
-                        name="ordinalNum"
-                        value={formData.ordinalNum}
+                        name="ordinalNuber"
+                        value={formData.ordinalNuber}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -136,6 +136,5 @@ export const CreateRootPageForm = () => {
                 </Button>
                 {error && <p style={{ color: "red" }}>{error}</p>}
             </Form>
-        </Container>
     );
 }

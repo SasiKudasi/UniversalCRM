@@ -1,10 +1,8 @@
-import Link from "next/link";
-import { ListGroup } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import AdminHeader from "./components/adminHeader";
-
 export default function DashBoardPage() {
     return (
-        <div className="container mt-4">
+        <Container className="mt-4">
             <div className="row">
                 <main className="col-md-8">
                     <h1>Добро пожаловать в дашборд</h1>
@@ -13,8 +11,11 @@ export default function DashBoardPage() {
                         другая информация.
                     </p>
                 </main>
-                <AdminHeader/>
+                <div className="col-md-4">
+                    <AdminHeader />
+                </div>
             </div>
-        </div>
+        </Container>
+
     );
 }

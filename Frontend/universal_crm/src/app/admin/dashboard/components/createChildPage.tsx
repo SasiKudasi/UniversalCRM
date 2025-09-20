@@ -32,7 +32,7 @@ export const CreateChildPageForm = () => {
     const [formData, setFormData] = useState<RootPage>({
         title: '',
         path: '',
-        ordinalNum: 0,
+        ordinalNuber: 0,
         content: '',
         metaTitle: '',
         metaDescription: '',
@@ -68,7 +68,7 @@ export const CreateChildPageForm = () => {
 
 
     return (
-        <Container className="mt-4">
+
             <Form onSubmit={handleSubmit}>
                 <Form.Select onChange={(e) => setParentPage(e.target.value)}>
                     {pages.map((page) => (
@@ -103,8 +103,8 @@ export const CreateChildPageForm = () => {
                     <Form.Label>Порядковый номер</Form.Label>
                     <Form.Control
                         type="number"
-                        name="ordinalNum"
-                        value={formData.ordinalNum}
+                        name="ordinalNuber"
+                        value={formData.ordinalNuber}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -166,6 +166,5 @@ export const CreateChildPageForm = () => {
                 </Button>
                 {error && <p style={{ color: "red" }}>{error}</p>}
             </Form>
-        </Container>
     )
 }

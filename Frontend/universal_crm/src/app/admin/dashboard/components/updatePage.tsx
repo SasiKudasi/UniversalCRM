@@ -66,7 +66,7 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
     if (!formData) return <p>Загрузка...</p>;
 
     return (
-        <Container className="mt-4">
+      
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Title</Form.Label>
@@ -94,8 +94,8 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                     <Form.Label>Порядковый номер</Form.Label>
                     <Form.Control
                         type="number"
-                        name="ordinalNum"
-                        value={formData.ordinalNum ?? ""}
+                        name="ordinalNuber"
+                        value={formData.ordinalNuber ?? ""}
                         onChange={handleChange}
                     />
                 </Form.Group>
@@ -156,6 +156,6 @@ export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
                 </Button>
                 {error && <p style={{ color: "red" }}>{error}</p>}
             </Form>
-        </Container>
+      
     )
 }

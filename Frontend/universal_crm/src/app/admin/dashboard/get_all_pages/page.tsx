@@ -1,7 +1,8 @@
 'use client';
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Row, Table } from "react-bootstrap";
+import Col from 'react-bootstrap/Col';
 import AdminHeader from "../components/adminHeader";
 import { pageService } from '../services/pageService';
 
@@ -42,9 +43,8 @@ export default function GetAllPages() {
     return (
         <div className="container mt-4">
             <h1>Страницы</h1>
-            <div className="row">
-
-                <div className="col-md-8">
+            <Row>
+                <Col sm={8}>
                     <Table striped bordered hover responsive>
                         <thead>
                             <tr>
@@ -86,11 +86,9 @@ export default function GetAllPages() {
                             ))}
                         </tbody>
                     </Table>
-                </div>
-                <div className="col-md-4">
-                    <AdminHeader />
-                </div>
-            </div>
+                </Col>
+                <AdminHeader />
+            </Row>
         </div>
     );
 }

@@ -6,7 +6,7 @@ export const pageService = {
 
     formData.append('Title', RootPage.title);
     formData.append('Path', RootPage.path);
-    formData.append('OrdinalNum', RootPage.ordinalNum.toString());
+    formData.append('OrdinalNum', RootPage.ordinalNuber.toString());
     formData.append('Content', RootPage.content);
     formData.append('MetaTitle', RootPage.metaTitle);
     formData.append('MetaDescription', RootPage.metaDescription);
@@ -27,7 +27,7 @@ export const pageService = {
     const formData = new FormData();
     formData.append('Title', RootPage.title);
     formData.append('Path', RootPage.path);
-    formData.append('OrdinalNum', RootPage.ordinalNum.toString());
+    formData.append('OrdinalNum', RootPage.ordinalNuber.toString());
     formData.append('Content', RootPage.content);
     formData.append('MetaTitle', RootPage.metaTitle);
     formData.append('MetaDescription', RootPage.metaDescription);
@@ -48,7 +48,7 @@ export const pageService = {
     const payload = {
       Title: RootPage.title,
       Path: RootPage.path,
-      OrdinalNum: RootPage.ordinalNum,
+      OrdinalNum: RootPage.ordinalNuber,
       Content: RootPage.content,
       MetaTitle: RootPage.metaTitle,
       MetaDescription: RootPage.metaDescription,
