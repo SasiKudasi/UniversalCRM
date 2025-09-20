@@ -30,7 +30,7 @@ export default function GetAllPages() {
     }, []);
 
     async function handleDelete(id: string) {
-        var response = await pageService.delete(id);
+        const response = await pageService.delete(id);
         if (response.status == 200) {
             window.location.reload();
         }
@@ -66,6 +66,7 @@ export default function GetAllPages() {
                                 <Button
                                     variant="warning"
                                     size="sm"
+                                    onClick={() => window.location.href = "/admin/dashboard/updatePage/" + page.id}
                                 >
                                     Обновить
                                 </Button>

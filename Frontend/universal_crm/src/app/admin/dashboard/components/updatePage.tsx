@@ -1,3 +1,4 @@
+'use client'
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,7 +12,11 @@ interface Page {
     path: string;
 }
 
-export const CreateChildPageForm = () => {
+interface UpdatePageFormProps {
+    pageId: string; // <-- сюда будем передавать id страницы
+}
+
+export const UpdatePageForm = ({ pageId }: UpdatePageFormProps) => {
     const router = useRouter();
 
     const [pages, setPages] = useState<Page[]>([]);
@@ -29,31 +34,49 @@ export const CreateChildPageForm = () => {
             });
     }, []);
 
-    const [formData, setFormData] = useState<RootPage>({
-        Title: '',
-        Path: '',
-        OrdinalNum: 0,
-        Content: '',
-        MetaTitle: '',
-        MetaDescription: '',
-        MetaKeywords: '',
-        IsActive: true
-    });
+    useEffect(() => {
+        if (!pageId) return;
+
+        api.get(`/admin/${pageId}`, {
+            headers: { Accept: "application/json" },
+            withCredentials: true,
+        })
+            .then((res) => setFormData(res.data))
+            .catch((err) => {
+                console.error(err);
+                setError("Не удалось загрузить страницу");
+            });
+    }, [pageId]);
+
+
+
+    const [formData, setFormData] = useState<RootPage | null>(null);
+
     const [parentPage, setParentPage] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value, type, checked } = e.target as HTMLInputElement;
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-        }));
+        setFormData((prev) =>
+            prev
+                ? {
+                    ...prev,
+                    [name]: type === "checkbox" ? checked : value,
+                }
+                : prev
+        );
     };
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
 
         try {
+            if (!formData) {
+                setError("Данные страницы не загружены");
+                return;
+            }
             const response = await pageService.createChild(parentPage, formData);
             console.log(response.status)
             if (response.status == 201) {
@@ -66,6 +89,7 @@ export const CreateChildPageForm = () => {
         }
     }
 
+    if (!formData) return <p>Загрузка...</p>;
 
     return (
         <Container className="mt-4">

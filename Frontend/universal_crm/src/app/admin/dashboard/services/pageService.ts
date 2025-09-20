@@ -44,7 +44,6 @@ export const pageService = {
     return response;
   },
 
-  // Другие методы для админа
   update: async (id: string, RootPage: RootPage) => {
     const formData = new FormData();
     formData.append('Title', RootPage.Title);
@@ -60,5 +59,7 @@ export const pageService = {
   delete: async (id: string) => {
     const response = await api.delete("/admin/" + id);
     return response;
-  }
+  },
+
+
 };

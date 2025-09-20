@@ -19,7 +19,6 @@ export const CreateRootPageForm = () => {
         IsActive: true
     });
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
 
@@ -30,20 +29,18 @@ export const CreateRootPageForm = () => {
     };
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setLoading(true);
         setError(null);
 
         try {
-            var response = await pageService.createRoot(formData);
+            const response = await pageService.createRoot(formData);
             console.log(response.status)
             if (response.status == 201) {
                 router.push("/admin/dashboard/get_all_pages");
             }
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         catch (error: any) {
             setError(error.message);
-        } finally {
-            setLoading(false);
         }
     }
 

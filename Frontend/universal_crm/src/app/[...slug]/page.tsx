@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-
+import { pageServiceClient } from "../services/pageServiceClient";
 interface Page {
     id: string;
     title: string;
@@ -11,23 +11,17 @@ interface Page {
     children: Page[];
 }
 
-export async function getPageByPath(path: string): Promise<Page | null> {
-    const res = await fetch(`http://localhost:5197/api/page_by_path?path=${path}`);
-    if (!res.ok) return null;
-    return res.json();
-}
+
 
 interface PageProps {
-    params: any; // params теперь объект-функция
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    params: any;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    // нужно await, чтобы получить реальный объект
     const resolvedParams = await params;
     const path = resolvedParams.slug?.join("/") || "";
-
-    const page = await getPageByPath(path);
-
+    const page = await pageServiceClient.getPageByPath(path);
     if (!page) return { title: "Страница не найдена" };
 
     return {
@@ -37,11 +31,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-
 export default async function Page({ params }: PageProps) {
     const resolvedParams = await params;
     const path = resolvedParams.slug?.join("/") || "";
-    const page = await getPageByPath(path);
+    const page = await pageServiceClient.getPageByPath(path);
 
     if (!page) return <h1>Страница не найдена</h1>;
 
